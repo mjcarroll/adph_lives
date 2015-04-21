@@ -64,10 +64,25 @@ if __name__=="__main__":
         data = get_establishments(cc['MADISON'], v)
         if data is None:
             continue
-
-        f = open(v + '.txt', 'w')
+        f = open('MADISON/' + v + '.tsv', 'w')
+        f.write('\t'.join([
+            "Name",
+            "City",
+            "Zip",
+            "Score",
+            "Non-Smoking",
+            "Date",
+            "Street"]))
+        f.write('\n')
         for d in data:
-            f.write(', '.join([d[0].encode("utf8"), d[1].encode("utf8"),
-                               str(int(d[2].strip('-'))), str(int(d[3])), d[4].encode("utf8"),
-                               d[5].encode("utf8"), d[6].encode("utf8")]))
+            zip_code = d[2].strip('-')
+            if len(zip_code) == 0:
+                zip_code = 'NULL'
+            f.write('\t'.join([
+                d[0].encode("utf8"),
+                d[1].encode("utf8"),
+                str(zip_code),
+                str(int(d[3])), d[4].encode("utf8"),
+                d[5].encode("utf8"),
+                d[6].encode("utf8")]))
             f.write('\n')
