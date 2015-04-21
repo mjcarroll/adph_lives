@@ -3,12 +3,16 @@ from bs4 import BeautifulSoup
 
 url = "http://foodscores.state.al.us/(S(bcxxpt55pb2zrt45ki3yef55))/Default.aspx"
 
-def find_counties_types():
+def prep():
     br = mechanize.Browser()
     br.set_handle_robots(False)
     br.addheaders =  [('User-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1')]
     br.open(url)
     br.select_form(nr=0)
+    return br
+
+def find_counties_types():
+    br = prep()
     type_control = br.form.find_control(name="ctl00$ContentPlaceHolder1$DrpEstdType")
     county_control = br.form.find_control(name="ctl00$ContentPlaceHolder1$DrpCnty")
     counties = {}
@@ -38,14 +42,6 @@ def parse_entries(tr):
         data.append(dd)
     return data
 
-def prep():
-    br = mechanize.Browser()
-    br.set_handle_robots(False)
-    br.addheaders =  [('User-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1')]
-    br.open(url)
-    br.select_form(nr=0)
-    return br
-
 def get_establishments( county, estab_type ):
     br = prep()
     type_control = br.form.find_control(name="ctl00$ContentPlaceHolder1$DrpEstdType")
@@ -72,6 +68,6 @@ if __name__=="__main__":
         f = open(v + '.txt', 'w')
         for d in data:
             f.write(', '.join([d[0].encode("utf8"), d[1].encode("utf8"),
-                               int(d[2]), int(d[3]), d[4].encode("utf8"),
-                               d[5].encode("utf8")]))
+                               str(int(d[2].strip('-'))), str(int(d[3])), d[4].encode("utf8"),
+                               d[5].encode("utf8"), d[6].encode("utf8")]))
             f.write('\n')
